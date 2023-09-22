@@ -1,20 +1,25 @@
-import { AppDataSource } from "../data-source"
-import { NextFunction, Request, Response } from "express"
-import { User } from "../entity/User"
+import {AppDataSource} from "../data-source"
+import {NextFunction, Request, Response} from "express"
+import {User} from "../entity/User"
 
 export class UserController {
 
     private userRepository = AppDataSource.getRepository(User)
 
     async all(request: Request, response: Response, next: NextFunction) {
-        return this.userRepository.find()
+        return this.userRepository.find({
+                relations: {
+                    posts: true,
+                },
+            }
+        )
     }
 
     async one(request: Request, response: Response, next: NextFunction) {
         const id = parseInt(request.params.id)
 
         const user = await this.userRepository.findOne({
-            where: { id }
+            where: {id}
         })
 
         if (!user) {
@@ -24,7 +29,7 @@ export class UserController {
     }
 
     async save(request: Request, response: Response, next: NextFunction) {
-        const { firstName, lastName, age } = request.body;
+        const {firstName, lastName, age} = request.body;
 
         const user = Object.assign(new User(), {
             firstName,
@@ -38,7 +43,7 @@ export class UserController {
     async remove(request: Request, response: Response, next: NextFunction) {
         const id = parseInt(request.params.id)
 
-        let userToRemove = await this.userRepository.findOneBy({ id })
+        let userToRemove = await this.userRepository.findOneBy({id})
 
         if (!userToRemove) {
             return "this user not exist"

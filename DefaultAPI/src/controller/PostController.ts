@@ -7,7 +7,13 @@ export class PostController {
     private postRepository = AppDataSource.getRepository(Post)
 
     async all(request: Request, response: Response, next: NextFunction) {
-        return this.postRepository.find()
+        return this.postRepository.find(
+            {
+                relations: {
+                    user: true,
+                },
+            }
+        )
     }
 
     async one(request: Request, response: Response, next: NextFunction) {
