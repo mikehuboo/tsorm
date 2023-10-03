@@ -1,19 +1,14 @@
-import {Post} from "../../src/entity/Post";
+import request from "supertest";
+import app from "../../src/index";
 
-describe('Get All Posts', () => {
-    it('it should get a post', async () => {
-        const response = await fetch('http://localhost:3000/posts/2');
+describe("POST /posts", () => {
+    it("should create a new post", async () => {
+        const newPost = { title: "Test Post", content: "This is a test post." };
+        const response = await request(app)
+            .post("/posts")
+            .send(newPost);
 
-        expect(response.status).toEqual(200);
-
-        const data = await response.json();
-        expect(data).toMatchObject({
-            id: 1,
-            title: 'Title Post 1',
-            description: 'Description Post 1',
-        })
-
-        console.log(data);
+        expect(response.status).toBe(201);
+        expect(response.body).toMatchObject(newPost);
     });
-
 });
